@@ -1,4 +1,4 @@
-# bitespeed
+# BiteSpeed
 
 The project aims to provide a solution to the following problem statement at : [https://bitespeed.notion.site/Bitespeed-Backend-Task-Identity-Reconciliation-53392ab01fe149fab989422300423199](https://bitespeed.notion.site/Bitespeed-Backend-Task-Identity-Reconciliation-53392ab01fe149fab989422300423199)
 
@@ -40,7 +40,6 @@ Payload :
 {
     "email" : "example1@example.com",
     "phoneNumber" : "9872",
-    "elephantSQLURL" : "postgres://kfgnatmz:qGami9Y5hnyf5Esy1hVbpbGrNf1KaBOJ@satao.db.elephantsql.com/kfgnatmz"
 }
 
 ```
