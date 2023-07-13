@@ -43,3 +43,21 @@ Payload :
 }
 
 ```
+
+# Sample Response
+
+```
+
+{
+    "status": "Success",
+    "message": "Database update performed successfully",
+    "contact": {
+        "primaryContatctId": 15,
+        "emails": ["example1@example.com","example1@example.com","example1@example.com","example1@example.com",
+            "example1@example.com","example1@example.com","example1@example.com"],
+        "phoneNumbers": ["9872","9876543210","1234567890","5555555555","9876543210","9872","9872"],
+        "secondaryContactIds": [12,1,4,14,16,17]
+    }
+}
+
+```
