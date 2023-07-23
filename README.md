@@ -10,7 +10,7 @@ The project aims to provide a solution to the following problem statement at : [
 
 # How to Run
 
-1. Simply run docker-compose up --build it will build the image and start a container
+1. Simply run **docker-compose up --build** it will build the image and start a container
 2. Then Use the following endpoint :
    - [http://localhost:8080/api/v1/identity](http://localhost:8080/api/v1/identity)
 
