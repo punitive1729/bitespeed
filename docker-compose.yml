@@ -1,0 +1,14 @@
+version: '1'
+services:
+  app:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - db 
+  db:
+    image: postgres:latest 
+    ports:
+      - 5432:5432
+    environment:
+      - PG_DB_URL=postgres://kfgnatmz:qGami9Y5hnyf5Esy1hVbpbGrNf1KaBOJ@satao.db.elephantsql.com/kfgnatmz

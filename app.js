@@ -13,7 +13,10 @@ app.get('/api/v1/health', (req, res) => {
   console.log('Backend is fine...');
   res
     .status(200)
-    .json({ status: 'success', message: 'Backend services running fine' });
+    .json({
+      status: 'success',
+      message: 'Bitespeed Backend services running fine',
+    });
 });
 
 app.use('/api/v1/identity', identityRouter);

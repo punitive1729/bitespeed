@@ -4,6 +4,8 @@ const {
   INSERT_INTO_CONTACTS_QUERY,
   SECONDARY,
   PRIMARY,
+  GET_CONTACT_QUERY,
+  GET_SECONDARY_CONTACTS_WITH_LINKEDID,
 } = require('../constants/query.constants');
 const { getSelectQuery, getUpdateQuery } = require('../utils/query.builder');
 
@@ -32,17 +34,22 @@ exports.identityController = async (req, res, next) => {
     // Get all primaryContacts
     const primaryContacts = (
       await client.query(selectQuery.query, selectQuery.params)
-    ).rows;
+    ).rows.map((item) => item.id);
 
-    console.log(`Number of Primary Contacts : ${primaryContacts.length}`);
+    console.log(
+      `Primary Contact Ids : ${primaryContacts.length}`,
+      primaryContacts
+    );
     let primaryRecord;
 
     const currRecordParams = [
       phoneNumber,
       email,
-      primaryContacts.length == 1 ? primaryContacts[0].id : null,
+      primaryContacts.length == 1 ? primaryContacts[0] : null,
       primaryContacts.length == 1 ? SECONDARY : PRIMARY,
     ];
+
+    console.log('Current record params', currRecordParams);
 
     // Insert the new Record
     const currentRecord = (
@@ -50,21 +57,31 @@ exports.identityController = async (req, res, next) => {
     ).rows[0];
 
     console.log(`Current Record :`, currentRecord);
-    if (primaryContacts.length === 1) primaryRecord = primaryContacts[0];
-    else primaryRecord = currentRecord;
+    let secondaryContacts;
 
-    // Update all remaining records to Secondary
-    const updateQuery = getUpdateQuery(
-      primaryRecord.email,
-      primaryRecord.phoneNumber,
-      primaryRecord.id
-    );
-
-    const secondaryContacts = (
-      await client.query(updateQuery.query, updateQuery.params)
-    ).rows;
+    if (primaryContacts.length === 1) {
+      primaryRecord = client.query(GET_CONTACT_QUERY, primaryContacts);
+      secondaryContacts = client.query(
+        GET_SECONDARY_CONTACTS_WITH_LINKEDID,
+        primaryContacts
+      );
+      primaryRecord = (await primaryRecord).rows[0];
+      secondaryContacts = (await secondaryContacts).rows;
+    } else {
+      primaryRecord = currentRecord;
+      secondaryContacts = [];
+      if (primaryContacts.length > 0) {
+        console.log('List of Ids: ', primaryContacts);
+        const updateQuery = getUpdateQuery(primaryContacts, primaryRecord.id);
+        secondaryContacts = (
+          await client.query(updateQuery.query, updateQuery.params)
+        ).rows;
+      }
+    }
 
     await client.query('COMMIT');
+
+    console.log('Secondary Contacts : ', secondaryContacts);
 
     const emails = [primaryRecord.email];
     const phoneNumbers = [primaryRecord.phonenumber];
@@ -89,7 +106,10 @@ exports.identityController = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.log('Rolling back the changes. Error executing the query : ', e);
+    console.log(
+      'Rolling back the changes. Error executing the query : ',
+      error
+    );
     await client.query('ROLLBACK');
   }
   if (client !== null) client.release();
